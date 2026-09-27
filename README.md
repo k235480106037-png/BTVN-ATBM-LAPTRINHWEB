@@ -26,8 +26,12 @@ Hệ thống sử dụng Docker Compose orchestrate 5 dịch vụ riêng biệt:
 - **Cloudflared (`cloudflared_tunnel`):** Thiết lập đường truyền HTTPS an toàn từ localhost ra Internet qua Cloudflare Zero Trust.
 
 ### 2. Sơ đồ kiến trúc chuyển tiếp
-```text
-Client (Browser) ──[HTTPS]──> Cloudflare Tunnel ──> Nginx Proxy (Port 80)
-                                                    ├── s1.kiennguyen1404.id.vn  ──> /html1
-                                                    │   └── /api/sinh-vien      ──> Node-RED (Port 1880)
-                                                    └── s2.kiennguyen1404.id.vn  ──> /html2
+```mermaid
+graph TD
+    Client[Client / Browser] -->|HTTPS| Cloudflare[Cloudflare Tunnel]
+    Cloudflare -->|HTTP| Nginx[Nginx Reverse Proxy - Port 80]
+    
+    Nginx -->|s1.kiennguyen1404.id.vn| Site1[Website 1 - /html1]
+    Site1 -->|/api/sinh-vien| NodeRED[Node-RED API - Port 1880]
+    
+    Nginx -->|s2.kiennguyen1404.id.vn| Site2[Website 2 - /html2]
