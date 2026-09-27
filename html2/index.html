@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool Mã Hóa AES & RSA - kiennguyen1404</title>
+    <!-- Thư viện Mã hóa CryptoJS (AES) và JSEncrypt (RSA) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 20px; background-color: #f0f2f5; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 25px; }
+        h1 { color: #1a73e8; text-align: center; }
+        h2 { color: #202124; border-bottom: 2px solid #1a73e8; padding-bottom: 8px; }
+        label { font-weight: bold; display: block; margin-top: 10px; }
+        input[type="text"], textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: monospace; }
+        button { padding: 10px 18px; margin-top: 12px; font-size: 14px; font-weight: bold; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-aes { background-color: #28a745; }
+        .btn-aes:hover { background-color: #218838; }
+        .btn-rsa { background-color: #007bff; }
+        .btn-rsa:hover { background-color: #0056b3; }
+        .result-box { background: #e9ecef; padding: 12px; border-radius: 4px; font-family: monospace; word-break: break-all; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Hệ Thống Mã Hóa & Giải Mã Trực Tuyến</h1>
+
+    <!-- KHỐI MÃ HÓA AES -->
+    <div class="card">
+        <h2>1. Mã hóa & Giải mã Đối xứng AES-256</h2>
+        
+        <label>Văn bản gốc (Plaintext):</label>
+        <input type="text" id="aesInput" value="Mật mã bảo mật thông tin 2026">
+
+        <label>Khóa bí mật (Secret Key):</label>
+        <input type="text" id="aesKey" value="MySecretKey123">
+
+        <button class="btn-aes" onclick="encryptAES()">Mã hóa AES</button>
+        <button class="btn-aes" onclick="decryptAES()" style="background-color: #dc3545;">Giải mã AES</button>
+
+        <label>Bản mã (Ciphertext Base64):</label>
+        <div id="aesEncResult" class="result-box">---</div>
+
+        <label>Kết quả giải mã:</label>
+        <div id="aesDecResult" class="result-box">---</div>
+    </div>
+
+    <!-- KHỐI MÃ HÓA RSA -->
+    <div class="card">
+        <h2>2. Mã hóa & Giải mã Bất đối xứng RSA</h2>
+        <button class="btn-rsa" onclick="generateRSAKeys()">Sinh Cặp Khóa RSA (1024-bit)</button>
+
+        <label>Khóa Công Khai (Public Key):</label>
+        <textarea id="rsaPubKey" rows="4" readonly placeholder="Bấm nút Sinh cặp khóa..."></textarea>
+
+        <label>Khóa Bí Mật (Private Key):</label>
+        <textarea id="rsaPrivKey" rows="5" readonly placeholder="Bấm nút Sinh cặp khóa..."></textarea>
+
+        <label>Thông điệp cần mã hóa:</label>
+        <input type="text" id="rsaInput" value="Thử nghiệm RSA Public Key Encryption">
+
+        <button class="btn-rsa" onclick="encryptRSA()">Mã hóa bằng Public Key</button>
+        <button class="btn-rsa" onclick="decryptRSA()" style="background-color: #6c757d;">Giải mã bằng Private Key</button>
+
+        <label>Bản mã RSA (Ciphertext):</label>
+        <div id="rsaEncResult" class="result-box">---</div>
+
+        <label>Kết quả giải mã RSA:</label>
+        <div id="rsaDecResult" class="result-box">---</div>
+    </div>
+</div>
+
+<script>
+    // --- XỬ LÝ AES ---
+    function encryptAES() {
+        const text = document.getElementById('aesInput').value;
+        const key = document.getElementById('aesKey').value;
+        if (!text || !key) return alert("Vui lòng nhập văn bản và khóa!");
+        
+        const encrypted = CryptoJS.AES.encrypt(text, key).toString();
+        document.getElementById('aesEncResult').innerText = encrypted;
+    }
+
+    function decryptAES() {
+        const cipherText = document.getElementById('aesEncResult').innerText;
+        const key = document.getElementById('aesKey').value;
+        if (cipherText === '---') return alert("Chưa có bản mã để giải mã!");
+
+        try {
+            const bytes = CryptoJS.AES.decrypt(cipherText, key);
+            const originalText = bytes.toString(CryptoJS.enc.Utf8);
+            document.getElementById('aesDecResult').innerText = originalText || "Khóa giải mã sai!";
+        } catch (e) {
+            document.getElementById('aesDecResult').innerText = "Lỗi giải mã!";
+        }
+    }
+
+    // --- XỬ LÝ RSA ---
+    let crypt = new JSEncrypt({default_key_size: 1024});
+
+    function generateRSAKeys() {
+        document.getElementById('rsaPubKey').value = "Đang khởi tạo cặp khóa RSA...";
+        document.getElementById('rsaPrivKey').value = "Đang khởi tạo cặp khóa RSA...";
+        
+        setTimeout(() => {
+            crypt.getKey();
+            document.getElementById('rsaPubKey').value = crypt.getPublicKey();
+            document.getElementById('rsaPrivKey').value = crypt.getPrivateKey();
+        }, 100);
+    }
+
+    function encryptRSA() {
+        const pubKey = document.getElementById('rsaPubKey').value;
+        const text = document.getElementById('rsaInput').value;
+        if (!pubKey || pubKey.includes("Đang")) return alert("Vui lòng sinh cặp khóa RSA trước!");
+
+        crypt.setPublicKey(pubKey);
+        const encrypted = crypt.encrypt(text);
+        document.getElementById('rsaEncResult').innerText = encrypted || "Mã hóa thất bại!";
+    }
+
+    function decryptRSA() {
+        const privKey = document.getElementById('rsaPrivKey').value;
+        const cipherText = document.getElementById('rsaEncResult').innerText;
+        if (cipherText === '---') return alert("Chưa có bản mã RSA!");
+
+        crypt.setPrivateKey(privKey);
+        const decrypted = crypt.decrypt(cipherText);
+        document.getElementById('rsaDecResult').innerText = decrypted || "Giải mã thất bại!";
+    }
+</script>
+
+</body>
+</html>

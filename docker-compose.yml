@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./html1:/usr/share/nginx/html/site1
+      - ./html2:/usr/share/nginx/html/site2
+    networks:
+      - web_net
+
+  nodered:
+    image: nodered/node-red:latest
+    container_name: nodered_app
+    restart: always
+    ports:
+      - "1880:1880"
+    volumes:
+      - nodered_data:/data
+    networks:
+      - web_net
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: student_db
+      MYSQL_USER: webuser
+      MYSQL_PASSWORD: webpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - web_net
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin_tool
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mariadb
+      MYSQL_ROOT_PASSWORD: rootpassword
+    depends_on:
+      - mariadb
+    networks:
+      - web_net
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared_tunnel
+    restart: always
+    command: tunnel --no-autoupdate run --token eyJhIjoiNTQwMGUyYTVhODNkNGM0MmRlNGExMmQ5NTIzYjIxMTgiLCJ0IjoiMThiN2VmYzAtM2ViMC00YjkwLWFkMWYtOWRjZThiYTkyNmQ1IiwicyI6IlltTTJPV0kzWVRBdFpHWTJPUzAwTkROaUxXSmxPREV0WkdFMk56RTRaVE5pT0dSaCJ9
+    networks:
+      - web_net
+
+networks:
+  web_net:
+    driver: bridge
+
+volumes:
+  nodered_data:
+  db_data:

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website 1 - Hệ Thống Xét Học Bổng</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 30px; background-color: #f4f6f9; }
+        .container { max-width: 750px; margin: 0 auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { color: #007bff; margin-top: 0; }
+        button { padding: 12px 20px; font-size: 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #218838; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
+        th { background: #e9ecef; color: #495057; }
+        .status-info { font-weight: bold; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Website 1: Quản Lý & Xét Học Bổng Sinh Viên</h2>
+        <button onclick="fetchScholarships()">Tải Danh Sách Đạt Học Bổng (API)</button>
+        
+        <p id="statusMsg" class="status-info"></p>
+
+        <table id="scholarshipTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Mã SV</th>
+                    <th>Họ & Tên</th>
+                    <th>Chuyên Ngành</th>
+                    <th>GPA</th>
+                    <th>Mức Học Bổng</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        async function fetchScholarships() {
+            const statusMsg = document.getElementById('statusMsg');
+            const table = document.getElementById('scholarshipTable');
+            const tbody = document.getElementById('tableBody');
+            
+            statusMsg.innerText = "Đang kết nối API Node-RED qua Nginx Reverse Proxy...";
+            statusMsg.style.color = "#007bff";
+            tbody.innerHTML = "";
+
+            try {
+                // Gọi Endpoint tương đối qua Nginx
+                const response = await fetch('/api/sinh-vien');
+                if (!response.ok) throw new Error("Không thể kết nối API");
+                const data = await response.json();
+
+                if (data.status === 200) {
+                    statusMsg.innerText = `${data.message} (${data.timestamp})`;
+                    statusMsg.style.color = "green";
+
+                    data.students.forEach(sv => {
+                        const moneyFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(sv.scholarship);
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><b>${sv.id}</b></td>
+                                <td>${sv.name}</td>
+                                <td>${sv.major}</td>
+                                <td>${sv.gpa}</td>
+                                <td style="color: #d93025; font-weight: bold;">${moneyFormatted}</td>
+                            </tr>
+                        `;
+                    });
+                    table.style.display = "table";
+                }
+            } catch (err) {
+                statusMsg.innerText = "Lỗi gọi API: " + err.message;
+                statusMsg.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
