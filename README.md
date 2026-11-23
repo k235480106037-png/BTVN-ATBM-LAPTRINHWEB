@@ -1,4 +1,4 @@
-BÁO CÁO BÀI TẬP VỀ NHÀ: LẬP TRÌNH WEB & AN TOÀN BẢO MẬT THÔNG TIN
+BÀI TẬP VỀ NHÀ: LẬP TRÌNH WEB & AN TOÀN BẢO MẬT THÔNG TIN
 Họ và tên: Nguyễn Trung Kiên
 Tên miền hệ thống: `kiennguyen1404.id.vn`
 Môi trường triển khai: Ubuntu 24.04 (WSL2), Docker Compose, Cloudflare Tunnel
