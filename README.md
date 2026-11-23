@@ -1,7 +1,17 @@
 BÀI TẬP VỀ NHÀ: LẬP TRÌNH WEB & AN TOÀN BẢO MẬT THÔNG TIN
+
+
 Họ và tên: Nguyễn Trung Kiên
+
+
 Tên miền hệ thống: `kiennguyen1404.id.vn`
+
+
+
 Môi trường triển khai: Ubuntu 24.04 (WSL2), Docker Compose, Cloudflare Tunnel
+
+
+
 Thời hạn nộp bài: 23h59 ngày 28/09/2026
 ---
 🌐 DEMO HỆ THỐNG TRỰC TUYẾN
