@@ -1,4 +1,4 @@
-# ĐỒ ÁN MÔN LẬP TRÌNH WEB VÀ AN TOÀN BẢO MẬT THÔNG TIN
+# MÔN LẬP TRÌNH WEB VÀ AN TOÀN BẢO MẬT THÔNG TIN
 
 - **Họ và tên:** Nguyễn Trung Kiên
 - **Tên miền hệ thống:** `kiennguyen1404.id.vn`
