@@ -10,16 +10,18 @@ API Endpoint (Node-RED JSON): https://s1.kiennguyen1404.id.vn/api/sinh-vien
 Website 2 (Công cụ Mã hóa/Giải mã AES & RSA): https://s2.kiennguyen1404.id.vn
 ---
 📊 SƠ ĐỒ KIẾN TRÚC HỆ THỐNG
-```mermaid
-graph TD
-    Client["Client / Browser"] -->|HTTPS| Cloudflare["Cloudflare Tunnel"]
-    Cloudflare -->|HTTP| Nginx["Nginx Reverse Proxy - Port 80"]
+```text
+[ Client / Browser ]
+        │ (HTTPS)
+        ▼
+[ Cloudflare Tunnel ]
+        │ (HTTP)
+        ▼
+[ Nginx Reverse Proxy (Port 80) ]
+        ├── s1.kiennguyen1404.id.vn ──► [ Website 1 - /html1 ] ──► /api/sinh-vien ──► [ Node-RED - Port 1880 ]
+        └── s2.kiennguyen1404.id.vn ──► [ Website 2 - /html2 ]
 
-    Nginx -->|s1.kiennguyen1404.id.vn| Site1["Website 1 - /html1"]
-    Site1 -->|/api/sinh-vien| NodeRED["Node-RED API - Port 1880"]
-
-    Nginx -->|s2.kiennguyen1404.id.vn| Site2["Website 2 - /html2"]
----
+```
 PHẦN 1: BÀI TẬP MÔN LẬP TRÌNH WEB
 1. Môi trường giả lập & Containerization (Docker Compose)
 Hệ thống được khởi tạo trên môi trường giả lập Linux Ubuntu 24.04 (WSL2), sử dụng Docker Compose điều phối 5 dịch vụ chạy độc lập trên cùng mạng nội bộ `web_net`:
